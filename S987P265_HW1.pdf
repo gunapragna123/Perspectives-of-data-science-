@@ -1,0 +1,2341 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "5f1e6678",
+   "metadata": {},
+   "source": [
+    "## INSTRUCTIONS \n",
+    "\n",
+    "Every learner should submit his/her own homework solutions. However, you are allowed to discuss the homework with each other– but everyone must submit his/her own solution; you may not copy someone else’s solution. \n",
+    "\n",
+    "The homework consists of two parts:\n",
+    "1.\tData manipulation\n",
+    "2.\tExploratory Data Analysis\n",
+    "\n",
+    "Follow the prompts in the attached jupyter notebook. Download the data and place it in your working directory, or modify the path to upload it to your notebook. Add markdown cells to your analysis to include your solutions, comments, answers. Add as many cells as you need, for easy readability comment when possible.\n",
+    "Hopefully this homework will help you develop skills, make you understand the flow of an EDA, get you ready for individual work.\n",
+    "\n",
+    "Submission: Send in both a ipynb and a pdf file of your work. \n",
+    "\n",
+    "Good luck!\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3f2f64e1",
+   "metadata": {},
+   "source": [
+    "# Part1: Cleaning, wrangling data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7888edb2",
+   "metadata": {},
+   "source": [
+    "**Data cleaning focuses on removing inaccurate data from your data set whereas data wrangling focuses on transforming the data's format, typically by converting “raw” data into another format more suitable for use.\n",
+    "This excersize uses the traffic_cameras file. Your task is to follow prompts to change, modify your data. Try your best!**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ab144c65",
+   "metadata": {},
+   "source": [
+    "**WSU ID:** S987P265 <br>\n",
+    "**NAME:** KOTUR GUNA PRAGNA"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "38d1560b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#read,importing the libraries\n",
+    "import numpy as np\n",
+    "from sklearn.datasets import load_iris\n",
+    "from sklearn import preprocessing\n",
+    "import pandas as pd\n",
+    " "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "88d54d37",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Camera ID</th>\n",
+       "      <th>Location Name</th>\n",
+       "      <th>Camera Status</th>\n",
+       "      <th>Turn on Date</th>\n",
+       "      <th>Camera Manufacturer</th>\n",
+       "      <th>ATD Location ID</th>\n",
+       "      <th>Landmark</th>\n",
+       "      <th>Signal Engineer Area</th>\n",
+       "      <th>Council District</th>\n",
+       "      <th>Jurisdiction</th>\n",
+       "      <th>...</th>\n",
+       "      <th>CROSS_ST_AKA</th>\n",
+       "      <th>COA Intersection ID</th>\n",
+       "      <th>Modified Date</th>\n",
+       "      <th>IP Comm Status</th>\n",
+       "      <th>IP Comm Status Date and Time</th>\n",
+       "      <th>Published Screenshots</th>\n",
+       "      <th>Screenshot Address</th>\n",
+       "      <th>Funding</th>\n",
+       "      <th>ID</th>\n",
+       "      <th>Location</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>370</td>\n",
+       "      <td>PLEASANT VALLEY RD / NUCKOLS CROSSING RD</td>\n",
+       "      <td>TURNED_ON</td>\n",
+       "      <td>5/24/2018</td>\n",
+       "      <td>Advidia</td>\n",
+       "      <td>LOC16-003180</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>SOUTHEAST</td>\n",
+       "      <td>2</td>\n",
+       "      <td>AUSTIN FULL PURPOSE</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>5157009.0</td>\n",
+       "      <td>10/28/2021 08:40:00 AM +0000</td>\n",
+       "      <td>ONLINE</td>\n",
+       "      <td>10/28/2021 08:30:00 AM +0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>https://cctv.austinmobility.io/image/370.jpg</td>\n",
+       "      <td>1/4 Cent</td>\n",
+       "      <td>591a10a020eacf2d16669b94</td>\n",
+       "      <td>POINT (-97.7449036 30.1844883)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>379</td>\n",
+       "      <td>BARTON SPRINGS RD / KINNEY AVE</td>\n",
+       "      <td>TURNED_ON</td>\n",
+       "      <td>5/21/2018</td>\n",
+       "      <td>Advidia</td>\n",
+       "      <td>LOC16-000640</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>SOUTHWEST</td>\n",
+       "      <td>5</td>\n",
+       "      <td>AUSTIN FULL PURPOSE</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>5154418.0</td>\n",
+       "      <td>10/29/2021 08:45:00 AM +0000</td>\n",
+       "      <td>ONLINE</td>\n",
+       "      <td>10/29/2021 08:35:00 AM +0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>https://cctv.austinmobility.io/image/379.jpg</td>\n",
+       "      <td>1/4 Cent</td>\n",
+       "      <td>591a10a020eacf2d16669ba6</td>\n",
+       "      <td>POINT (-97.761467 30.261982)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>404</td>\n",
+       "      <td>SPRINGDALE RD / OAK SPRINGS DR</td>\n",
+       "      <td>TURNED_ON</td>\n",
+       "      <td>6/7/2018</td>\n",
+       "      <td>Advidia</td>\n",
+       "      <td>LOC16-000800</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NORTHEAST</td>\n",
+       "      <td>3, 1</td>\n",
+       "      <td>AUSTIN FULL PURPOSE</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>5163165.0</td>\n",
+       "      <td>10/29/2021 07:38:00 PM +0000</td>\n",
+       "      <td>ONLINE</td>\n",
+       "      <td>10/28/2021 08:35:00 AM +0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>https://cctv.austinmobility.io/image/404.jpg</td>\n",
+       "      <td>1/4 Cent</td>\n",
+       "      <td>591a10a120eacf2d16669bd8</td>\n",
+       "      <td>POINT (-97.6904221 30.2735615)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>447</td>\n",
+       "      <td>BRAKER LN / STONELAKE BLVD</td>\n",
+       "      <td>TURNED_ON</td>\n",
+       "      <td>9/9/2016</td>\n",
+       "      <td>Advidia</td>\n",
+       "      <td>LOC16-003740</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NORTHWEST</td>\n",
+       "      <td>7</td>\n",
+       "      <td>AUSTIN FULL PURPOSE</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>5156985.0</td>\n",
+       "      <td>10/29/2021 07:49:00 PM +0000</td>\n",
+       "      <td>ONLINE</td>\n",
+       "      <td>10/23/2021 08:35:00 AM +0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>https://cctv.austinmobility.io/image/447.jpg</td>\n",
+       "      <td>1/4 Cent</td>\n",
+       "      <td>591a10a320eacf2d16669c2e</td>\n",
+       "      <td>POINT (-97.7392883 30.3989582)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>552</td>\n",
+       "      <td>EXPOSITION BLVD / WESTOVER RD</td>\n",
+       "      <td>TURNED_ON</td>\n",
+       "      <td>2/24/2020</td>\n",
+       "      <td>Advidia</td>\n",
+       "      <td>LOC16-003710</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>CENTRAL</td>\n",
+       "      <td>10</td>\n",
+       "      <td>AUSTIN FULL PURPOSE</td>\n",
+       "      <td>...</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>5153874.0</td>\n",
+       "      <td>10/29/2021 07:47:00 PM +0000</td>\n",
+       "      <td>ONLINE</td>\n",
+       "      <td>10/20/2021 08:35:00 AM +0000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>https://cctv.austinmobility.io/image/552.jpg</td>\n",
+       "      <td>None Identified</td>\n",
+       "      <td>5aa6bb0121cbcf4b8b767294</td>\n",
+       "      <td>POINT (-97.7643051 30.3030338)</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 28 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Camera ID                              Location Name Camera Status  \\\n",
+       "0        370   PLEASANT VALLEY RD / NUCKOLS CROSSING RD     TURNED_ON   \n",
+       "1        379             BARTON SPRINGS RD / KINNEY AVE     TURNED_ON   \n",
+       "2        404             SPRINGDALE RD / OAK SPRINGS DR     TURNED_ON   \n",
+       "3        447                 BRAKER LN / STONELAKE BLVD     TURNED_ON   \n",
+       "4        552              EXPOSITION BLVD / WESTOVER RD     TURNED_ON   \n",
+       "\n",
+       "  Turn on Date Camera Manufacturer ATD Location ID Landmark  \\\n",
+       "0    5/24/2018             Advidia    LOC16-003180      NaN   \n",
+       "1    5/21/2018             Advidia    LOC16-000640      NaN   \n",
+       "2     6/7/2018             Advidia    LOC16-000800      NaN   \n",
+       "3     9/9/2016             Advidia    LOC16-003740      NaN   \n",
+       "4    2/24/2020             Advidia    LOC16-003710      NaN   \n",
+       "\n",
+       "  Signal Engineer Area Council District         Jurisdiction  ...  \\\n",
+       "0            SOUTHEAST                2  AUSTIN FULL PURPOSE  ...   \n",
+       "1            SOUTHWEST                5  AUSTIN FULL PURPOSE  ...   \n",
+       "2            NORTHEAST             3, 1  AUSTIN FULL PURPOSE  ...   \n",
+       "3            NORTHWEST                7  AUSTIN FULL PURPOSE  ...   \n",
+       "4              CENTRAL               10  AUSTIN FULL PURPOSE  ...   \n",
+       "\n",
+       "  CROSS_ST_AKA  COA Intersection ID                 Modified Date  \\\n",
+       "0          NaN            5157009.0  10/28/2021 08:40:00 AM +0000   \n",
+       "1          NaN            5154418.0  10/29/2021 08:45:00 AM +0000   \n",
+       "2          NaN            5163165.0  10/29/2021 07:38:00 PM +0000   \n",
+       "3          NaN            5156985.0  10/29/2021 07:49:00 PM +0000   \n",
+       "4          NaN            5153874.0  10/29/2021 07:47:00 PM +0000   \n",
+       "\n",
+       "   IP Comm Status  IP Comm Status Date and Time  Published Screenshots  \\\n",
+       "0          ONLINE  10/28/2021 08:30:00 AM +0000                    NaN   \n",
+       "1          ONLINE  10/29/2021 08:35:00 AM +0000                    NaN   \n",
+       "2          ONLINE  10/28/2021 08:35:00 AM +0000                    NaN   \n",
+       "3          ONLINE  10/23/2021 08:35:00 AM +0000                    NaN   \n",
+       "4          ONLINE  10/20/2021 08:35:00 AM +0000                    NaN   \n",
+       "\n",
+       "                             Screenshot Address          Funding  \\\n",
+       "0  https://cctv.austinmobility.io/image/370.jpg         1/4 Cent   \n",
+       "1  https://cctv.austinmobility.io/image/379.jpg         1/4 Cent   \n",
+       "2  https://cctv.austinmobility.io/image/404.jpg         1/4 Cent   \n",
+       "3  https://cctv.austinmobility.io/image/447.jpg         1/4 Cent   \n",
+       "4  https://cctv.austinmobility.io/image/552.jpg  None Identified   \n",
+       "\n",
+       "                         ID                        Location  \n",
+       "0  591a10a020eacf2d16669b94  POINT (-97.7449036 30.1844883)  \n",
+       "1  591a10a020eacf2d16669ba6    POINT (-97.761467 30.261982)  \n",
+       "2  591a10a120eacf2d16669bd8  POINT (-97.6904221 30.2735615)  \n",
+       "3  591a10a320eacf2d16669c2e  POINT (-97.7392883 30.3989582)  \n",
+       "4  5aa6bb0121cbcf4b8b767294  POINT (-97.7643051 30.3030338)  \n",
+       "\n",
+       "[5 rows x 28 columns]"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Reading the CSV file\n",
+    "df = pd.read_csv(\"traffic_cameras.csv\")\n",
+    " \n",
+    "# Printing top 5 rows\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c4f907eb",
+   "metadata": {},
+   "source": [
+    "### 1. How many rows and columns does your data have?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "afcbcf2e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of Rows: 802\n",
+      "Number of Columns: 28\n"
+     ]
+    }
+   ],
+   "source": [
+    "#len function is applied on the data to get the number of rows, columns\n",
+    "total_rows=len(df.axes[0]) #===> Axes of 0 is for a row\n",
+    "total_cols=len(df.axes[1]) #===> Axes of 0 is for a column\n",
+    "print(\"Number of Rows: \"+str(total_rows))\n",
+    "print(\"Number of Columns: \"+str(total_cols))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e5faa5c9",
+   "metadata": {},
+   "source": [
+    "### 2. What can you tell us about the type of variables we have?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "4842966f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 802 entries, 0 to 801\n",
+      "Data columns (total 28 columns):\n",
+      " #   Column                        Non-Null Count  Dtype  \n",
+      "---  ------                        --------------  -----  \n",
+      " 0   Camera ID                     802 non-null    int64  \n",
+      " 1   Location Name                 802 non-null    object \n",
+      " 2   Camera Status                 802 non-null    object \n",
+      " 3   Turn on Date                  442 non-null    object \n",
+      " 4   Camera Manufacturer           646 non-null    object \n",
+      " 5   ATD Location ID               802 non-null    object \n",
+      " 6   Landmark                      94 non-null     object \n",
+      " 7   Signal Engineer Area          799 non-null    object \n",
+      " 8   Council District              790 non-null    object \n",
+      " 9   Jurisdiction                  799 non-null    object \n",
+      " 10  Location Type                 802 non-null    object \n",
+      " 11  Primary St Segment ID         0 non-null      float64\n",
+      " 12  Cross St Segment ID           0 non-null      float64\n",
+      " 13  Primary Street Block          800 non-null    float64\n",
+      " 14  Primary Street                801 non-null    object \n",
+      " 15  PRIMARY_ST_AKA                0 non-null      float64\n",
+      " 16  Cross Street Block            757 non-null    float64\n",
+      " 17  Cross Street                  765 non-null    object \n",
+      " 18  CROSS_ST_AKA                  0 non-null      float64\n",
+      " 19  COA Intersection ID           740 non-null    float64\n",
+      " 20  Modified Date                 802 non-null    object \n",
+      " 21  IP Comm Status                802 non-null    object \n",
+      " 22  IP Comm Status Date and Time  802 non-null    object \n",
+      " 23  Published Screenshots         0 non-null      float64\n",
+      " 24  Screenshot Address            802 non-null    object \n",
+      " 25  Funding                       750 non-null    object \n",
+      " 26  ID                            802 non-null    object \n",
+      " 27  Location                      802 non-null    object \n",
+      "dtypes: float64(8), int64(1), object(19)\n",
+      "memory usage: 175.6+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 119,
+   "id": "976b3281",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Camera ID                         int64\n",
+       "Location Name                    object\n",
+       "Camera Status                    object\n",
+       "Turn on Date                     object\n",
+       "Camera Manufacturer              object\n",
+       "ATD Location ID                  object\n",
+       "Landmark                         object\n",
+       "Signal Engineer Area             object\n",
+       "Council District                 object\n",
+       "Jurisdiction                     object\n",
+       "Location Type                    object\n",
+       "Primary St Segment ID           float64\n",
+       "Cross St Segment ID             float64\n",
+       "Primary Street Block            float64\n",
+       "Primary Street                   object\n",
+       "PRIMARY_ST_AKA                  float64\n",
+       "Cross Street Block              float64\n",
+       "Cross Street                     object\n",
+       "CROSS_ST_AKA                    float64\n",
+       "COA Intersection ID             float64\n",
+       "Modified Date                    object\n",
+       "IP Comm Status                   object\n",
+       "IP Comm Status Date and Time     object\n",
+       "Published Screenshots           float64\n",
+       "Screenshot Address               object\n",
+       "Funding                          object\n",
+       "ID                               object\n",
+       "Location                         object\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 119,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#gives the type of variables \n",
+    "df.dtypes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "75da969d",
+   "metadata": {},
+   "source": [
+    "### 3. Delete only the columns that have all null values, name it df1 (nothing else, but null)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 120,
+   "id": "be53db8d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Empty DataFrame\n",
+      "Columns: [Camera ID, Location Name, Camera Status, Turn on Date, Camera Manufacturer, ATD Location ID, Landmark, Signal Engineer Area, Council District, Jurisdiction, Location Type, Primary St Segment ID, Cross St Segment ID, Primary Street Block, Primary Street, PRIMARY_ST_AKA, Cross Street Block, Cross Street, CROSS_ST_AKA, COA Intersection ID, Modified Date, IP Comm Status, IP Comm Status Date and Time, Published Screenshots, Screenshot Address, Funding, ID, Location]\n",
+      "Index: []\n",
+      "\n",
+      "[0 rows x 28 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "#removing the columns with null values \n",
+    "df1 = df.dropna()\n",
+    "print(df1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "3f42e860",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "Int64Index: 0 entries\n",
+      "Data columns (total 28 columns):\n",
+      " #   Column                        Non-Null Count  Dtype  \n",
+      "---  ------                        --------------  -----  \n",
+      " 0   Camera ID                     0 non-null      int64  \n",
+      " 1   Location Name                 0 non-null      object \n",
+      " 2   Camera Status                 0 non-null      object \n",
+      " 3   Turn on Date                  0 non-null      object \n",
+      " 4   Camera Manufacturer           0 non-null      object \n",
+      " 5   ATD Location ID               0 non-null      object \n",
+      " 6   Landmark                      0 non-null      object \n",
+      " 7   Signal Engineer Area          0 non-null      object \n",
+      " 8   Council District              0 non-null      object \n",
+      " 9   Jurisdiction                  0 non-null      object \n",
+      " 10  Location Type                 0 non-null      object \n",
+      " 11  Primary St Segment ID         0 non-null      float64\n",
+      " 12  Cross St Segment ID           0 non-null      float64\n",
+      " 13  Primary Street Block          0 non-null      float64\n",
+      " 14  Primary Street                0 non-null      object \n",
+      " 15  PRIMARY_ST_AKA                0 non-null      float64\n",
+      " 16  Cross Street Block            0 non-null      float64\n",
+      " 17  Cross Street                  0 non-null      object \n",
+      " 18  CROSS_ST_AKA                  0 non-null      float64\n",
+      " 19  COA Intersection ID           0 non-null      float64\n",
+      " 20  Modified Date                 0 non-null      object \n",
+      " 21  IP Comm Status                0 non-null      object \n",
+      " 22  IP Comm Status Date and Time  0 non-null      object \n",
+      " 23  Published Screenshots         0 non-null      float64\n",
+      " 24  Screenshot Address            0 non-null      object \n",
+      " 25  Funding                       0 non-null      object \n",
+      " 26  ID                            0 non-null      object \n",
+      " 27  Location                      0 non-null      object \n",
+      "dtypes: float64(8), int64(1), object(19)\n",
+      "memory usage: 0.0+ bytes\n"
+     ]
+    }
+   ],
+   "source": [
+    "df1.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5a4e6533",
+   "metadata": {},
+   "source": [
+    "### 4. Dropp columns that have (any) null values name it df2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 121,
+   "id": "b40f9dbd",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     Camera ID                                      Location Name  \\\n",
+      "0          370           PLEASANT VALLEY RD / NUCKOLS CROSSING RD   \n",
+      "1          379                     BARTON SPRINGS RD / KINNEY AVE   \n",
+      "2          404                     SPRINGDALE RD / OAK SPRINGS DR   \n",
+      "3          447                         BRAKER LN / STONELAKE BLVD   \n",
+      "4          552                      EXPOSITION BLVD / WESTOVER RD   \n",
+      "..         ...                                                ...   \n",
+      "797       1190                             GUADALUPE ST / 46TH ST   \n",
+      "798       1274                    CESAR CHAVEZ ST / SAN MARCOS ST   \n",
+      "799       1275                     BURNET RD / RESEARCH BLVD SVRD   \n",
+      "800       1276   BASTROP HWY / MONTOPOLIS TO BASTROP NB RAMP (...   \n",
+      "801       1277                       BURNET RD / BRIGHT VERDE WAY   \n",
+      "\n",
+      "    Camera Status ATD Location ID Location Type                 Modified Date  \\\n",
+      "0       TURNED_ON    LOC16-003180       ROADWAY  10/28/2021 08:40:00 AM +0000   \n",
+      "1       TURNED_ON    LOC16-000640       ROADWAY  10/29/2021 08:45:00 AM +0000   \n",
+      "2       TURNED_ON    LOC16-000800       ROADWAY  10/29/2021 07:38:00 PM +0000   \n",
+      "3       TURNED_ON    LOC16-003740       ROADWAY  10/29/2021 07:49:00 PM +0000   \n",
+      "4       TURNED_ON    LOC16-003710       ROADWAY  10/29/2021 07:47:00 PM +0000   \n",
+      "..            ...             ...           ...                           ...   \n",
+      "797     TURNED_ON    LOC16-006535       ROADWAY  09/19/2021 06:17:00 PM +0000   \n",
+      "798     TURNED_ON    LOC16-005790       ROADWAY  09/19/2021 06:17:00 PM +0000   \n",
+      "799     TURNED_ON    LOC16-003045       ROADWAY  09/19/2021 06:17:00 PM +0000   \n",
+      "800     TURNED_ON    LOC21-017685       ROADWAY  10/31/2021 08:40:00 AM +0000   \n",
+      "801     TURNED_ON    LOC20-017295       ROADWAY  09/19/2021 06:17:00 PM +0000   \n",
+      "\n",
+      "    IP Comm Status  IP Comm Status Date and Time  \\\n",
+      "0           ONLINE  10/28/2021 08:30:00 AM +0000   \n",
+      "1           ONLINE  10/29/2021 08:35:00 AM +0000   \n",
+      "2           ONLINE  10/28/2021 08:35:00 AM +0000   \n",
+      "3           ONLINE  10/23/2021 08:35:00 AM +0000   \n",
+      "4           ONLINE  10/20/2021 08:35:00 AM +0000   \n",
+      "..             ...                           ...   \n",
+      "797         ONLINE  06/08/2021 08:30:00 AM +0000   \n",
+      "798        OFFLINE  05/12/2021 08:30:00 AM +0000   \n",
+      "799         ONLINE  03/13/2021 09:35:00 AM +0000   \n",
+      "800         ONLINE  10/31/2021 08:30:00 AM +0000   \n",
+      "801         ONLINE  06/17/2021 08:30:00 AM +0000   \n",
+      "\n",
+      "                                Screenshot Address                        ID  \\\n",
+      "0     https://cctv.austinmobility.io/image/370.jpg  591a10a020eacf2d16669b94   \n",
+      "1     https://cctv.austinmobility.io/image/379.jpg  591a10a020eacf2d16669ba6   \n",
+      "2     https://cctv.austinmobility.io/image/404.jpg  591a10a120eacf2d16669bd8   \n",
+      "3     https://cctv.austinmobility.io/image/447.jpg  591a10a320eacf2d16669c2e   \n",
+      "4     https://cctv.austinmobility.io/image/552.jpg  5aa6bb0121cbcf4b8b767294   \n",
+      "..                                             ...                       ...   \n",
+      "797  https://cctv.austinmobility.io/image/1190.jpg  5f8da8c34e4035067602f80c   \n",
+      "798  https://cctv.austinmobility.io/image/1274.jpg  5fa580608c53d7001593adf2   \n",
+      "799  https://cctv.austinmobility.io/image/1275.jpg  604b73eed89027001b43b7ca   \n",
+      "800  https://cctv.austinmobility.io/image/1276.jpg  60709789cd04d0001b7605d1   \n",
+      "801  https://cctv.austinmobility.io/image/1277.jpg  60ca5d216ce423001e32595e   \n",
+      "\n",
+      "                           Location  \n",
+      "0    POINT (-97.7449036 30.1844883)  \n",
+      "1      POINT (-97.761467 30.261982)  \n",
+      "2    POINT (-97.6904221 30.2735615)  \n",
+      "3    POINT (-97.7392883 30.3989582)  \n",
+      "4    POINT (-97.7643051 30.3030338)  \n",
+      "..                              ...  \n",
+      "797     POINT (-97.73252 30.313028)  \n",
+      "798  POINT (-97.7346111 30.2605892)  \n",
+      "799  POINT (-97.7264786 30.3728848)  \n",
+      "800  POINT (-97.6902124 30.2427789)  \n",
+      "801        POINT (-97.7228 30.3883)  \n",
+      "\n",
+      "[802 rows x 11 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "#drop the columns with the null values\n",
+    "df2 = df.dropna(axis=1)\n",
+    "print(df2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "bd374d91",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 802 entries, 0 to 801\n",
+      "Data columns (total 11 columns):\n",
+      " #   Column                        Non-Null Count  Dtype \n",
+      "---  ------                        --------------  ----- \n",
+      " 0   Camera ID                     802 non-null    int64 \n",
+      " 1   Location Name                 802 non-null    object\n",
+      " 2   Camera Status                 802 non-null    object\n",
+      " 3   ATD Location ID               802 non-null    object\n",
+      " 4   Location Type                 802 non-null    object\n",
+      " 5   Modified Date                 802 non-null    object\n",
+      " 6   IP Comm Status                802 non-null    object\n",
+      " 7   IP Comm Status Date and Time  802 non-null    object\n",
+      " 8   Screenshot Address            802 non-null    object\n",
+      " 9   ID                            802 non-null    object\n",
+      " 10  Location                      802 non-null    object\n",
+      "dtypes: int64(1), object(10)\n",
+      "memory usage: 69.0+ KB\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "(802, 11)"
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df2.info()\n",
+    "df2.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bee9f584",
+   "metadata": {},
+   "source": [
+    "### 5. Rename column names in df2 so they are more usable (name the new dataframe df3) to the followings: cam_id, loc_name, cam_stat, atd_loc_id, loc_type, date, comm_stat, comm_stat_date, screen_addr, id, location"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "bd4eb82a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#rename function is used to rename the columns\n",
+    "\n",
+    "df3=df2.rename(columns = {'Camera ID':'cam_id', 'Location Name':'loc_name',\n",
+    "                              'Camera Status':'cam_stat', 'ATD Location ID':'atd_loc_id', 'Location Type':'loc_type',\n",
+    "                              'Modified Date':'date','IP Comm Status':'comm_stat', 'IP Comm Status Date and Time':'comm_stat_date',\n",
+    "                              'Screenshot Address':'screen_addr','ID':'id','Location':'location'})\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "1c571fb9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method NDFrame.head of      cam_id                                           loc_name   cam_stat  \\\n",
+       "0       370           PLEASANT VALLEY RD / NUCKOLS CROSSING RD  TURNED_ON   \n",
+       "1       379                     BARTON SPRINGS RD / KINNEY AVE  TURNED_ON   \n",
+       "2       404                     SPRINGDALE RD / OAK SPRINGS DR  TURNED_ON   \n",
+       "3       447                         BRAKER LN / STONELAKE BLVD  TURNED_ON   \n",
+       "4       552                      EXPOSITION BLVD / WESTOVER RD  TURNED_ON   \n",
+       "..      ...                                                ...        ...   \n",
+       "797    1190                             GUADALUPE ST / 46TH ST  TURNED_ON   \n",
+       "798    1274                    CESAR CHAVEZ ST / SAN MARCOS ST  TURNED_ON   \n",
+       "799    1275                     BURNET RD / RESEARCH BLVD SVRD  TURNED_ON   \n",
+       "800    1276   BASTROP HWY / MONTOPOLIS TO BASTROP NB RAMP (...  TURNED_ON   \n",
+       "801    1277                       BURNET RD / BRIGHT VERDE WAY  TURNED_ON   \n",
+       "\n",
+       "       atd_loc_id loc_type                          date comm_stat  \\\n",
+       "0    LOC16-003180  ROADWAY  10/28/2021 08:40:00 AM +0000    ONLINE   \n",
+       "1    LOC16-000640  ROADWAY  10/29/2021 08:45:00 AM +0000    ONLINE   \n",
+       "2    LOC16-000800  ROADWAY  10/29/2021 07:38:00 PM +0000    ONLINE   \n",
+       "3    LOC16-003740  ROADWAY  10/29/2021 07:49:00 PM +0000    ONLINE   \n",
+       "4    LOC16-003710  ROADWAY  10/29/2021 07:47:00 PM +0000    ONLINE   \n",
+       "..            ...      ...                           ...       ...   \n",
+       "797  LOC16-006535  ROADWAY  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "798  LOC16-005790  ROADWAY  09/19/2021 06:17:00 PM +0000   OFFLINE   \n",
+       "799  LOC16-003045  ROADWAY  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "800  LOC21-017685  ROADWAY  10/31/2021 08:40:00 AM +0000    ONLINE   \n",
+       "801  LOC20-017295  ROADWAY  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "\n",
+       "                   comm_stat_date  \\\n",
+       "0    10/28/2021 08:30:00 AM +0000   \n",
+       "1    10/29/2021 08:35:00 AM +0000   \n",
+       "2    10/28/2021 08:35:00 AM +0000   \n",
+       "3    10/23/2021 08:35:00 AM +0000   \n",
+       "4    10/20/2021 08:35:00 AM +0000   \n",
+       "..                            ...   \n",
+       "797  06/08/2021 08:30:00 AM +0000   \n",
+       "798  05/12/2021 08:30:00 AM +0000   \n",
+       "799  03/13/2021 09:35:00 AM +0000   \n",
+       "800  10/31/2021 08:30:00 AM +0000   \n",
+       "801  06/17/2021 08:30:00 AM +0000   \n",
+       "\n",
+       "                                       screen_addr                        id  \\\n",
+       "0     https://cctv.austinmobility.io/image/370.jpg  591a10a020eacf2d16669b94   \n",
+       "1     https://cctv.austinmobility.io/image/379.jpg  591a10a020eacf2d16669ba6   \n",
+       "2     https://cctv.austinmobility.io/image/404.jpg  591a10a120eacf2d16669bd8   \n",
+       "3     https://cctv.austinmobility.io/image/447.jpg  591a10a320eacf2d16669c2e   \n",
+       "4     https://cctv.austinmobility.io/image/552.jpg  5aa6bb0121cbcf4b8b767294   \n",
+       "..                                             ...                       ...   \n",
+       "797  https://cctv.austinmobility.io/image/1190.jpg  5f8da8c34e4035067602f80c   \n",
+       "798  https://cctv.austinmobility.io/image/1274.jpg  5fa580608c53d7001593adf2   \n",
+       "799  https://cctv.austinmobility.io/image/1275.jpg  604b73eed89027001b43b7ca   \n",
+       "800  https://cctv.austinmobility.io/image/1276.jpg  60709789cd04d0001b7605d1   \n",
+       "801  https://cctv.austinmobility.io/image/1277.jpg  60ca5d216ce423001e32595e   \n",
+       "\n",
+       "                           location  \n",
+       "0    POINT (-97.7449036 30.1844883)  \n",
+       "1      POINT (-97.761467 30.261982)  \n",
+       "2    POINT (-97.6904221 30.2735615)  \n",
+       "3    POINT (-97.7392883 30.3989582)  \n",
+       "4    POINT (-97.7643051 30.3030338)  \n",
+       "..                              ...  \n",
+       "797     POINT (-97.73252 30.313028)  \n",
+       "798  POINT (-97.7346111 30.2605892)  \n",
+       "799  POINT (-97.7264786 30.3728848)  \n",
+       "800  POINT (-97.6902124 30.2427789)  \n",
+       "801        POINT (-97.7228 30.3883)  \n",
+       "\n",
+       "[802 rows x 11 columns]>"
+      ]
+     },
+     "execution_count": 68,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df3.head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d4bf751e",
+   "metadata": {},
+   "source": [
+    "### 6. Split \"date\" column into two  new columns within df3 ('Dates' and 'Time') /modify df3 data/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 124,
+   "id": "1a6d0645",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df3['Dates'] = pd.to_datetime(df3['date']).dt.date\n",
+    "df3['Time'] = pd.to_datetime(df3['date']).dt.time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 123,
+   "id": "06a52aca",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method NDFrame.head of      cam_id                                           loc_name   cam_stat  \\\n",
+       "0       370           PLEASANT VALLEY RD / NUCKOLS CROSSING RD  TURNED_ON   \n",
+       "1       379                     BARTON SPRINGS RD / KINNEY AVE  TURNED_ON   \n",
+       "2       404                     SPRINGDALE RD / OAK SPRINGS DR  TURNED_ON   \n",
+       "3       447                         BRAKER LN / STONELAKE BLVD  TURNED_ON   \n",
+       "4       552                      EXPOSITION BLVD / WESTOVER RD  TURNED_ON   \n",
+       "..      ...                                                ...        ...   \n",
+       "797    1190                             GUADALUPE ST / 46TH ST  TURNED_ON   \n",
+       "798    1274                    CESAR CHAVEZ ST / SAN MARCOS ST  TURNED_ON   \n",
+       "799    1275                     BURNET RD / RESEARCH BLVD SVRD  TURNED_ON   \n",
+       "800    1276   BASTROP HWY / MONTOPOLIS TO BASTROP NB RAMP (...  TURNED_ON   \n",
+       "801    1277                       BURNET RD / BRIGHT VERDE WAY  TURNED_ON   \n",
+       "\n",
+       "       atd_loc_id  loc_type                          date comm_stat  \\\n",
+       "0    LOC16-003180         0  10/28/2021 08:40:00 AM +0000    ONLINE   \n",
+       "1    LOC16-000640         0  10/29/2021 08:45:00 AM +0000    ONLINE   \n",
+       "2    LOC16-000800         0  10/29/2021 07:38:00 PM +0000    ONLINE   \n",
+       "3    LOC16-003740         0  10/29/2021 07:49:00 PM +0000    ONLINE   \n",
+       "4    LOC16-003710         0  10/29/2021 07:47:00 PM +0000    ONLINE   \n",
+       "..            ...       ...                           ...       ...   \n",
+       "797  LOC16-006535         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "798  LOC16-005790         0  09/19/2021 06:17:00 PM +0000   OFFLINE   \n",
+       "799  LOC16-003045         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "800  LOC21-017685         0  10/31/2021 08:40:00 AM +0000    ONLINE   \n",
+       "801  LOC20-017295         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "\n",
+       "                   comm_stat_date  \\\n",
+       "0    10/28/2021 08:30:00 AM +0000   \n",
+       "1    10/29/2021 08:35:00 AM +0000   \n",
+       "2    10/28/2021 08:35:00 AM +0000   \n",
+       "3    10/23/2021 08:35:00 AM +0000   \n",
+       "4    10/20/2021 08:35:00 AM +0000   \n",
+       "..                            ...   \n",
+       "797  06/08/2021 08:30:00 AM +0000   \n",
+       "798  05/12/2021 08:30:00 AM +0000   \n",
+       "799  03/13/2021 09:35:00 AM +0000   \n",
+       "800  10/31/2021 08:30:00 AM +0000   \n",
+       "801  06/17/2021 08:30:00 AM +0000   \n",
+       "\n",
+       "                                       screen_addr                        id  \\\n",
+       "0     https://cctv.austinmobility.io/image/370.jpg  591a10a020eacf2d16669b94   \n",
+       "1     https://cctv.austinmobility.io/image/379.jpg  591a10a020eacf2d16669ba6   \n",
+       "2     https://cctv.austinmobility.io/image/404.jpg  591a10a120eacf2d16669bd8   \n",
+       "3     https://cctv.austinmobility.io/image/447.jpg  591a10a320eacf2d16669c2e   \n",
+       "4     https://cctv.austinmobility.io/image/552.jpg  5aa6bb0121cbcf4b8b767294   \n",
+       "..                                             ...                       ...   \n",
+       "797  https://cctv.austinmobility.io/image/1190.jpg  5f8da8c34e4035067602f80c   \n",
+       "798  https://cctv.austinmobility.io/image/1274.jpg  5fa580608c53d7001593adf2   \n",
+       "799  https://cctv.austinmobility.io/image/1275.jpg  604b73eed89027001b43b7ca   \n",
+       "800  https://cctv.austinmobility.io/image/1276.jpg  60709789cd04d0001b7605d1   \n",
+       "801  https://cctv.austinmobility.io/image/1277.jpg  60ca5d216ce423001e32595e   \n",
+       "\n",
+       "                           location    Loc    code               corner1  \\\n",
+       "0    POINT (-97.7449036 30.1844883)  LOC16  003180   PLEASANT VALLEY RD    \n",
+       "1      POINT (-97.761467 30.261982)  LOC16  000640    BARTON SPRINGS RD    \n",
+       "2    POINT (-97.6904221 30.2735615)  LOC16  000800        SPRINGDALE RD    \n",
+       "3    POINT (-97.7392883 30.3989582)  LOC16  003740            BRAKER LN    \n",
+       "4    POINT (-97.7643051 30.3030338)  LOC16  003710      EXPOSITION BLVD    \n",
+       "..                              ...    ...     ...                   ...   \n",
+       "797     POINT (-97.73252 30.313028)  LOC16  006535         GUADALUPE ST    \n",
+       "798  POINT (-97.7346111 30.2605892)  LOC16  005790      CESAR CHAVEZ ST    \n",
+       "799  POINT (-97.7264786 30.3728848)  LOC16  003045            BURNET RD    \n",
+       "800  POINT (-97.6902124 30.2427789)  LOC21  017685          BASTROP HWY    \n",
+       "801        POINT (-97.7228 30.3883)  LOC20  017295            BURNET RD    \n",
+       "\n",
+       "                                               corner2  \n",
+       "0                                  NUCKOLS CROSSING RD  \n",
+       "1                                           KINNEY AVE  \n",
+       "2                                       OAK SPRINGS DR  \n",
+       "3                                       STONELAKE BLVD  \n",
+       "4                                          WESTOVER RD  \n",
+       "..                                                 ...  \n",
+       "797                                            46TH ST  \n",
+       "798                                      SAN MARCOS ST  \n",
+       "799                                 RESEARCH BLVD SVRD  \n",
+       "800   MONTOPOLIS TO BASTROP NB RAMP (US 183/Montopo...  \n",
+       "801                                   BRIGHT VERDE WAY  \n",
+       "\n",
+       "[802 rows x 15 columns]>"
+      ]
+     },
+     "execution_count": 123,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df3.head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "51bad5fd",
+   "metadata": {},
+   "source": [
+    "### 7. Split atd_loc into two new columns 'Loc' and 'code' within df3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "73392bc9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#split function is used to seprate into 2 columns\n",
+    "df3[['Loc','code']]=df3.atd_loc_id.str.split(\"-\",expand=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8dae84ff",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "df3.head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0bf32376",
+   "metadata": {},
+   "source": [
+    "### 8. What are the unique values in loc_type?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "id": "6e24c032",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['ROADWAY', 'BUILDING'], dtype=object)"
+      ]
+     },
+     "execution_count": 71,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#values that unique are displayed\n",
+    "df3.loc_type.unique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "84263370",
+   "metadata": {},
+   "source": [
+    "### 9. Replace 'ROADWAY' to '0',  'BUILDING' to '1' in the loc_type column within df3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "6e47a66e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df3['loc_type']=df3['loc_type'].map({'ROADWAY':0,'BUILDING':1})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "id": "dae2bb74",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method NDFrame.head of      cam_id                                           loc_name   cam_stat  \\\n",
+       "0       370           PLEASANT VALLEY RD / NUCKOLS CROSSING RD  TURNED_ON   \n",
+       "1       379                     BARTON SPRINGS RD / KINNEY AVE  TURNED_ON   \n",
+       "2       404                     SPRINGDALE RD / OAK SPRINGS DR  TURNED_ON   \n",
+       "3       447                         BRAKER LN / STONELAKE BLVD  TURNED_ON   \n",
+       "4       552                      EXPOSITION BLVD / WESTOVER RD  TURNED_ON   \n",
+       "..      ...                                                ...        ...   \n",
+       "797    1190                             GUADALUPE ST / 46TH ST  TURNED_ON   \n",
+       "798    1274                    CESAR CHAVEZ ST / SAN MARCOS ST  TURNED_ON   \n",
+       "799    1275                     BURNET RD / RESEARCH BLVD SVRD  TURNED_ON   \n",
+       "800    1276   BASTROP HWY / MONTOPOLIS TO BASTROP NB RAMP (...  TURNED_ON   \n",
+       "801    1277                       BURNET RD / BRIGHT VERDE WAY  TURNED_ON   \n",
+       "\n",
+       "       atd_loc_id  loc_type                          date comm_stat  \\\n",
+       "0    LOC16-003180         0  10/28/2021 08:40:00 AM +0000    ONLINE   \n",
+       "1    LOC16-000640         0  10/29/2021 08:45:00 AM +0000    ONLINE   \n",
+       "2    LOC16-000800         0  10/29/2021 07:38:00 PM +0000    ONLINE   \n",
+       "3    LOC16-003740         0  10/29/2021 07:49:00 PM +0000    ONLINE   \n",
+       "4    LOC16-003710         0  10/29/2021 07:47:00 PM +0000    ONLINE   \n",
+       "..            ...       ...                           ...       ...   \n",
+       "797  LOC16-006535         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "798  LOC16-005790         0  09/19/2021 06:17:00 PM +0000   OFFLINE   \n",
+       "799  LOC16-003045         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "800  LOC21-017685         0  10/31/2021 08:40:00 AM +0000    ONLINE   \n",
+       "801  LOC20-017295         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "\n",
+       "                   comm_stat_date  \\\n",
+       "0    10/28/2021 08:30:00 AM +0000   \n",
+       "1    10/29/2021 08:35:00 AM +0000   \n",
+       "2    10/28/2021 08:35:00 AM +0000   \n",
+       "3    10/23/2021 08:35:00 AM +0000   \n",
+       "4    10/20/2021 08:35:00 AM +0000   \n",
+       "..                            ...   \n",
+       "797  06/08/2021 08:30:00 AM +0000   \n",
+       "798  05/12/2021 08:30:00 AM +0000   \n",
+       "799  03/13/2021 09:35:00 AM +0000   \n",
+       "800  10/31/2021 08:30:00 AM +0000   \n",
+       "801  06/17/2021 08:30:00 AM +0000   \n",
+       "\n",
+       "                                       screen_addr                        id  \\\n",
+       "0     https://cctv.austinmobility.io/image/370.jpg  591a10a020eacf2d16669b94   \n",
+       "1     https://cctv.austinmobility.io/image/379.jpg  591a10a020eacf2d16669ba6   \n",
+       "2     https://cctv.austinmobility.io/image/404.jpg  591a10a120eacf2d16669bd8   \n",
+       "3     https://cctv.austinmobility.io/image/447.jpg  591a10a320eacf2d16669c2e   \n",
+       "4     https://cctv.austinmobility.io/image/552.jpg  5aa6bb0121cbcf4b8b767294   \n",
+       "..                                             ...                       ...   \n",
+       "797  https://cctv.austinmobility.io/image/1190.jpg  5f8da8c34e4035067602f80c   \n",
+       "798  https://cctv.austinmobility.io/image/1274.jpg  5fa580608c53d7001593adf2   \n",
+       "799  https://cctv.austinmobility.io/image/1275.jpg  604b73eed89027001b43b7ca   \n",
+       "800  https://cctv.austinmobility.io/image/1276.jpg  60709789cd04d0001b7605d1   \n",
+       "801  https://cctv.austinmobility.io/image/1277.jpg  60ca5d216ce423001e32595e   \n",
+       "\n",
+       "                           location    Loc    code  \n",
+       "0    POINT (-97.7449036 30.1844883)  LOC16  003180  \n",
+       "1      POINT (-97.761467 30.261982)  LOC16  000640  \n",
+       "2    POINT (-97.6904221 30.2735615)  LOC16  000800  \n",
+       "3    POINT (-97.7392883 30.3989582)  LOC16  003740  \n",
+       "4    POINT (-97.7643051 30.3030338)  LOC16  003710  \n",
+       "..                              ...    ...     ...  \n",
+       "797     POINT (-97.73252 30.313028)  LOC16  006535  \n",
+       "798  POINT (-97.7346111 30.2605892)  LOC16  005790  \n",
+       "799  POINT (-97.7264786 30.3728848)  LOC16  003045  \n",
+       "800  POINT (-97.6902124 30.2427789)  LOC21  017685  \n",
+       "801        POINT (-97.7228 30.3883)  LOC20  017295  \n",
+       "\n",
+       "[802 rows x 13 columns]>"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df3.head"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "a4fd78da",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 1])"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df3.loc_type.unique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "903acc12",
+   "metadata": {},
+   "source": [
+    "### 10. Split on on '/' the loc_name column into two new variables 'corner1', 'corner2' "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "e7dbdb07",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#spliting the columns into two different variables \n",
+    "df3[['corner1','corner2']]=df3.loc_name.str.split('/',n=1,expand=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "d65e0e81",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<bound method NDFrame.head of      cam_id                                           loc_name   cam_stat  \\\n",
+       "0       370           PLEASANT VALLEY RD / NUCKOLS CROSSING RD  TURNED_ON   \n",
+       "1       379                     BARTON SPRINGS RD / KINNEY AVE  TURNED_ON   \n",
+       "2       404                     SPRINGDALE RD / OAK SPRINGS DR  TURNED_ON   \n",
+       "3       447                         BRAKER LN / STONELAKE BLVD  TURNED_ON   \n",
+       "4       552                      EXPOSITION BLVD / WESTOVER RD  TURNED_ON   \n",
+       "..      ...                                                ...        ...   \n",
+       "797    1190                             GUADALUPE ST / 46TH ST  TURNED_ON   \n",
+       "798    1274                    CESAR CHAVEZ ST / SAN MARCOS ST  TURNED_ON   \n",
+       "799    1275                     BURNET RD / RESEARCH BLVD SVRD  TURNED_ON   \n",
+       "800    1276   BASTROP HWY / MONTOPOLIS TO BASTROP NB RAMP (...  TURNED_ON   \n",
+       "801    1277                       BURNET RD / BRIGHT VERDE WAY  TURNED_ON   \n",
+       "\n",
+       "       atd_loc_id  loc_type                          date comm_stat  \\\n",
+       "0    LOC16-003180         0  10/28/2021 08:40:00 AM +0000    ONLINE   \n",
+       "1    LOC16-000640         0  10/29/2021 08:45:00 AM +0000    ONLINE   \n",
+       "2    LOC16-000800         0  10/29/2021 07:38:00 PM +0000    ONLINE   \n",
+       "3    LOC16-003740         0  10/29/2021 07:49:00 PM +0000    ONLINE   \n",
+       "4    LOC16-003710         0  10/29/2021 07:47:00 PM +0000    ONLINE   \n",
+       "..            ...       ...                           ...       ...   \n",
+       "797  LOC16-006535         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "798  LOC16-005790         0  09/19/2021 06:17:00 PM +0000   OFFLINE   \n",
+       "799  LOC16-003045         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "800  LOC21-017685         0  10/31/2021 08:40:00 AM +0000    ONLINE   \n",
+       "801  LOC20-017295         0  09/19/2021 06:17:00 PM +0000    ONLINE   \n",
+       "\n",
+       "                   comm_stat_date  \\\n",
+       "0    10/28/2021 08:30:00 AM +0000   \n",
+       "1    10/29/2021 08:35:00 AM +0000   \n",
+       "2    10/28/2021 08:35:00 AM +0000   \n",
+       "3    10/23/2021 08:35:00 AM +0000   \n",
+       "4    10/20/2021 08:35:00 AM +0000   \n",
+       "..                            ...   \n",
+       "797  06/08/2021 08:30:00 AM +0000   \n",
+       "798  05/12/2021 08:30:00 AM +0000   \n",
+       "799  03/13/2021 09:35:00 AM +0000   \n",
+       "800  10/31/2021 08:30:00 AM +0000   \n",
+       "801  06/17/2021 08:30:00 AM +0000   \n",
+       "\n",
+       "                                       screen_addr                        id  \\\n",
+       "0     https://cctv.austinmobility.io/image/370.jpg  591a10a020eacf2d16669b94   \n",
+       "1     https://cctv.austinmobility.io/image/379.jpg  591a10a020eacf2d16669ba6   \n",
+       "2     https://cctv.austinmobility.io/image/404.jpg  591a10a120eacf2d16669bd8   \n",
+       "3     https://cctv.austinmobility.io/image/447.jpg  591a10a320eacf2d16669c2e   \n",
+       "4     https://cctv.austinmobility.io/image/552.jpg  5aa6bb0121cbcf4b8b767294   \n",
+       "..                                             ...                       ...   \n",
+       "797  https://cctv.austinmobility.io/image/1190.jpg  5f8da8c34e4035067602f80c   \n",
+       "798  https://cctv.austinmobility.io/image/1274.jpg  5fa580608c53d7001593adf2   \n",
+       "799  https://cctv.austinmobility.io/image/1275.jpg  604b73eed89027001b43b7ca   \n",
+       "800  https://cctv.austinmobility.io/image/1276.jpg  60709789cd04d0001b7605d1   \n",
+       "801  https://cctv.austinmobility.io/image/1277.jpg  60ca5d216ce423001e32595e   \n",
+       "\n",
+       "                           location    Loc    code               corner1  \\\n",
+       "0    POINT (-97.7449036 30.1844883)  LOC16  003180   PLEASANT VALLEY RD    \n",
+       "1      POINT (-97.761467 30.261982)  LOC16  000640    BARTON SPRINGS RD    \n",
+       "2    POINT (-97.6904221 30.2735615)  LOC16  000800        SPRINGDALE RD    \n",
+       "3    POINT (-97.7392883 30.3989582)  LOC16  003740            BRAKER LN    \n",
+       "4    POINT (-97.7643051 30.3030338)  LOC16  003710      EXPOSITION BLVD    \n",
+       "..                              ...    ...     ...                   ...   \n",
+       "797     POINT (-97.73252 30.313028)  LOC16  006535         GUADALUPE ST    \n",
+       "798  POINT (-97.7346111 30.2605892)  LOC16  005790      CESAR CHAVEZ ST    \n",
+       "799  POINT (-97.7264786 30.3728848)  LOC16  003045            BURNET RD    \n",
+       "800  POINT (-97.6902124 30.2427789)  LOC21  017685          BASTROP HWY    \n",
+       "801        POINT (-97.7228 30.3883)  LOC20  017295            BURNET RD    \n",
+       "\n",
+       "                                               corner2  \n",
+       "0                                  NUCKOLS CROSSING RD  \n",
+       "1                                           KINNEY AVE  \n",
+       "2                                       OAK SPRINGS DR  \n",
+       "3                                       STONELAKE BLVD  \n",
+       "4                                          WESTOVER RD  \n",
+       "..                                                 ...  \n",
+       "797                                            46TH ST  \n",
+       "798                                      SAN MARCOS ST  \n",
+       "799                                 RESEARCH BLVD SVRD  \n",
+       "800   MONTOPOLIS TO BASTROP NB RAMP (US 183/Montopo...  \n",
+       "801                                   BRIGHT VERDE WAY  \n",
+       "\n",
+       "[802 rows x 15 columns]>"
+      ]
+     },
+     "execution_count": 76,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df3.head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ccdcaabd",
+   "metadata": {},
+   "source": [
+    "# Part2: Exploratory Data Analysis (EDA)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a07bda12",
+   "metadata": {},
+   "source": [
+    "Exploratory Data Analysis refers to the critical process of performing initial investigations on data so as to discover patterns,to spot anomalies,to test hypothesis and to check assumptions with the help of summary statistics and graphical representations.\n",
+    "\n",
+    "Follow the lecture notes for ideas of how to perform EDA on your dataset. For help, here are the steps we talked about:\n",
+    "\n",
+    "***Steps in EDA***:\n",
+    "1. Provide descriptions of your sample and features\n",
+    "2. Check for missing data\n",
+    "3. Identify the shape of your data\n",
+    "4. Identify significant correlations\n",
+    "5. Spot/deal with outliers in the dataset\n",
+    "\n",
+    "These steps are a guidline. Try different things and share your insights about the dataset.\n",
+    "\n",
+    "**Don't forget to add \"markdown\" cells to include your findings or to explain what you are doing** "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "2ae8d8b2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# importing packages\n",
+    "import seaborn as sns\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "1d83766a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Species</th>\n",
+       "      <th>Weight</th>\n",
+       "      <th>Length1</th>\n",
+       "      <th>Length2</th>\n",
+       "      <th>Length3</th>\n",
+       "      <th>Height</th>\n",
+       "      <th>Width</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Bream</td>\n",
+       "      <td>242.0</td>\n",
+       "      <td>23.2</td>\n",
+       "      <td>25.4</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>11.5200</td>\n",
+       "      <td>4.0200</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Bream</td>\n",
+       "      <td>290.0</td>\n",
+       "      <td>24.0</td>\n",
+       "      <td>26.3</td>\n",
+       "      <td>31.2</td>\n",
+       "      <td>12.4800</td>\n",
+       "      <td>4.3056</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Bream</td>\n",
+       "      <td>340.0</td>\n",
+       "      <td>23.9</td>\n",
+       "      <td>26.5</td>\n",
+       "      <td>31.1</td>\n",
+       "      <td>12.3778</td>\n",
+       "      <td>4.6961</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Bream</td>\n",
+       "      <td>363.0</td>\n",
+       "      <td>26.3</td>\n",
+       "      <td>29.0</td>\n",
+       "      <td>33.5</td>\n",
+       "      <td>12.7300</td>\n",
+       "      <td>4.4555</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Bream</td>\n",
+       "      <td>430.0</td>\n",
+       "      <td>26.5</td>\n",
+       "      <td>29.0</td>\n",
+       "      <td>34.0</td>\n",
+       "      <td>12.4440</td>\n",
+       "      <td>5.1340</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  Species  Weight  Length1  Length2  Length3   Height   Width\n",
+       "0   Bream   242.0     23.2     25.4     30.0  11.5200  4.0200\n",
+       "1   Bream   290.0     24.0     26.3     31.2  12.4800  4.3056\n",
+       "2   Bream   340.0     23.9     26.5     31.1  12.3778  4.6961\n",
+       "3   Bream   363.0     26.3     29.0     33.5  12.7300  4.4555\n",
+       "4   Bream   430.0     26.5     29.0     34.0  12.4440  5.1340"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Reading the CSV file\n",
+    "df_fish = pd.read_csv(\"Fish.csv\")\n",
+    " \n",
+    "# Printing top 5 rows\n",
+    "df_fish.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "82b33dc6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(159, 7)"
+      ]
+     },
+     "execution_count": 80,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "d57a5108",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Bream', 'Roach', 'Whitefish', 'Parkki', 'Perch', 'Pike', 'Smelt'],\n",
+       "      dtype=object)"
+      ]
+     },
+     "execution_count": 81,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.Species.unique()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2419fe9c",
+   "metadata": {},
+   "source": [
+    "**1.Provide descriptions of your sample and features**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 95,
+   "id": "5579d2da",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#A description of 159 observations of seven distinct varieties of fish are in the sample dataset.\n",
+    "#From each observation we have taken Weight, 3 Lengths, Height and Width for consideration."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "863166c4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Species\n",
+       "Perch        56\n",
+       "Bream        35\n",
+       "Roach        20\n",
+       "Pike         17\n",
+       "Smelt        14\n",
+       "Parkki       11\n",
+       "Whitefish     6\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 82,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.value_counts('Species')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "e882e937",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Weight</th>\n",
+       "      <th>Length1</th>\n",
+       "      <th>Length2</th>\n",
+       "      <th>Length3</th>\n",
+       "      <th>Height</th>\n",
+       "      <th>Width</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>159.000000</td>\n",
+       "      <td>159.000000</td>\n",
+       "      <td>159.000000</td>\n",
+       "      <td>159.000000</td>\n",
+       "      <td>159.000000</td>\n",
+       "      <td>159.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>398.326415</td>\n",
+       "      <td>26.247170</td>\n",
+       "      <td>28.415723</td>\n",
+       "      <td>31.227044</td>\n",
+       "      <td>8.970994</td>\n",
+       "      <td>4.417486</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>357.978317</td>\n",
+       "      <td>9.996441</td>\n",
+       "      <td>10.716328</td>\n",
+       "      <td>11.610246</td>\n",
+       "      <td>4.286208</td>\n",
+       "      <td>1.685804</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>7.500000</td>\n",
+       "      <td>8.400000</td>\n",
+       "      <td>8.800000</td>\n",
+       "      <td>1.728400</td>\n",
+       "      <td>1.047600</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>120.000000</td>\n",
+       "      <td>19.050000</td>\n",
+       "      <td>21.000000</td>\n",
+       "      <td>23.150000</td>\n",
+       "      <td>5.944800</td>\n",
+       "      <td>3.385650</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>273.000000</td>\n",
+       "      <td>25.200000</td>\n",
+       "      <td>27.300000</td>\n",
+       "      <td>29.400000</td>\n",
+       "      <td>7.786000</td>\n",
+       "      <td>4.248500</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>650.000000</td>\n",
+       "      <td>32.700000</td>\n",
+       "      <td>35.500000</td>\n",
+       "      <td>39.650000</td>\n",
+       "      <td>12.365900</td>\n",
+       "      <td>5.584500</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>1650.000000</td>\n",
+       "      <td>59.000000</td>\n",
+       "      <td>63.400000</td>\n",
+       "      <td>68.000000</td>\n",
+       "      <td>18.957000</td>\n",
+       "      <td>8.142000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "            Weight     Length1     Length2     Length3      Height       Width\n",
+       "count   159.000000  159.000000  159.000000  159.000000  159.000000  159.000000\n",
+       "mean    398.326415   26.247170   28.415723   31.227044    8.970994    4.417486\n",
+       "std     357.978317    9.996441   10.716328   11.610246    4.286208    1.685804\n",
+       "min       0.000000    7.500000    8.400000    8.800000    1.728400    1.047600\n",
+       "25%     120.000000   19.050000   21.000000   23.150000    5.944800    3.385650\n",
+       "50%     273.000000   25.200000   27.300000   29.400000    7.786000    4.248500\n",
+       "75%     650.000000   32.700000   35.500000   39.650000   12.365900    5.584500\n",
+       "max    1650.000000   59.000000   63.400000   68.000000   18.957000    8.142000"
+      ]
+     },
+     "execution_count": 83,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 130,
+   "id": "ada763c4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAYAAAAEJCAYAAACdePCvAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjMuNCwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8QVMy6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAfTklEQVR4nO3dfUAUdf4H8PfCCnhhlxLrQ3Lcpaf4UMrdpWwoKBaPLqAYpymmJWoKnUqhApmaJKJGappa6plZnCYakWGXJpfhA5mK3uVlCpSewQqCoLLA7vz+8Ock8uAizK74fb/+YmZnZz7f2WHfO9/vzqxKkiQJREQkHBtrF0BERNbBACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUGprF9BUly9fhcnESxeIiMxhY6NC+/YP1PtYqwsAk0liABARtQB2ARERCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgWt11AER0w28fbAs7+3vvX7jKUIOyK9etXQaZ4d47eojILHb2arwR/7G1y6gjLnGUtUsgM7ELiIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUIr+IlhERARKSkqgVt/YzMKFC3H16lUsXrwYBoMBAQEBmDlzppIlEBFRAxQLAEmSkJ+fj6+++koOgMrKSvj7+2PLli3o3LkzpkyZgqysLHh7eytVBhERNUCxADh37hwA4Pnnn0dpaSnCw8PRo0cPuLq6wsXFBQCg0+mQmZnJACAisgLFAuDKlSvQarV49dVXUV1djfHjx2PSpElwdnaWl9FoNCgsLGzSep2cHFu6VCJqYc7O7axdAplBsQBwd3eHu7u7PD1q1CisXLkSf/7zn+V5kiRBpVI1ab3FxRUwmaQWq5OotbqX32T1+nJrl0D/z8ZG1eAHZ8W+BfTtt9/i4MGD8rQkSXjkkUeg1+vleXq9HhqNRqkSiIioEYoFQHl5OZKTk2EwGFBRUYGdO3di1qxZyMvLQ0FBAYxGIzIyMuDl5aVUCURE1AjFuoCGDh2KEydOIDQ0FCaTCc8++yzc3d2RlJSE6OhoGAwGeHt7w9/fX6kSiIioESpJklpVhzrHAIhucHZuhzfiP7Z2GXXEJY7iGMA9xCpjAEREdG9jABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgGABERIJiABARCYoBQEQkKAYAEZGgFA+AJUuWYM6cOQCA7Oxs6HQ6+Pr6IiUlRelNExFRIxQNgIMHD2Lnzp0AgMrKSsTFxWHNmjXYvXs3Tp06haysLCU3T0REjVAsAEpLS5GSkoKpU6cCAHJzc+Hq6goXFxeo1WrodDpkZmYqtXkiIroDtVIrnjdvHmbOnImLFy8CAIqKiuDs7Cw/rtFoUFhY2OT1Ojk5tliNRKQMZ+d21i6BzKBIAGzfvh2dO3eGVqtFWloaAMBkMkGlUsnLSJJUa9pcxcUVMJmkFquVqLW6l99k9fpya5dA/8/GRtXgB2dFAmD37t3Q6/UICQlBWVkZrl27hgsXLsDW1lZeRq/XQ6PRKLF5IiIygyIBsGnTJvnvtLQ0HDlyBAsWLICvry8KCgrQtWtXZGRkICwsTInNExGRGRQbA7idvb09kpKSEB0dDYPBAG9vb/j7+1tq80REdBuVJEmtqkOdYwBENzg7t8Mb8R9bu4w64hJHcQzgHtLYGACvBCYiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJBMQCIiATFACAiEpTFbgetlHYPOsDBvo21y6ij0lCN8iuV1i6DiKhBrT4AHOzb4NnYrdYuo44Pk8eiHAwAIrp3sQuIiEhQDAAiIkExAIiIBMUAICISFAOAiEhQDAAiIkGZFQCFhYV15v34448tXgwREVlOowFQWlqK0tJSREZGoqysTJ6+dOkSoqKiLFUjEREpoNELwWJiYvDNN98AAAYOHPjrk9Rq+Pn5KVsZEREpqtEA2LBhAwBg7ty5WLx4sUUKIiIiyzDrVhCLFy/GhQsXUFZWBkmS5Pl9+vRRrDAiIlKWWQGwcuVKbNiwAU5OTvI8lUqFvXv3KlYYEREpy6wA2LVrF7744gt07NhR6XqIiMhCzPoaaOfOne/qzX/FihUIDAxEUFAQNm3aBADIzs6GTqeDr68vUlJSmrxOIiJqGWadAWi1WiQnJ2PYsGFwcHCQ5zc2BnDkyBEcOnQI6enpqKmpQWBgILRaLeLi4rBlyxZ07twZU6ZMQVZWFry9vZvfEiIiahKzAiAtLQ0AkJmZKc+70xjAgAED8P7770OtVqOwsBBGoxFXrlyBq6srXFxcAAA6nQ6ZmZkMACIiKzArAPbt23dXK2/Tpg1WrlyJjRs3wt/fH0VFRXB2dpYf12g09V5l3BgnJ8e7qsUanJ3bWbsEIqvgsd86mBUAN/vvbzdx4sQ7Pvell15CZGQkpk6divz8fKhUKvkxSZJqTZujuLgCJtOvX0W9lw80vb7c2iXQfYzHPpnDxkbV4AdnswLghx9+kP+uqqpCTk4OtFpto885e/Ysqqqq0KtXL7Rt2xa+vr7IzMyEra2tvIxer4dGozGnBCIiamFmXwh2q8LCQsTHxzf6nPPnz2PlypX46KOPAAB79+7F6NGjkZycjIKCAnTt2hUZGRkICwu7y9KJiKg57upH4Tt27IgLFy40uoy3tzdyc3MRGhoKW1tb+Pr6IigoCB06dEB0dDQMBgO8vb3h7+9/V4UTEVHzNHkMQJIknDp1qtZVwQ2Jjo5GdHR0rXlarRbp6elNLJOIiFpak8cAgBsXhsXGxipSEBERWUaTxgAuXLiAmpoauLq6KloUEREpz6wAKCgowLRp01BUVASTyYT27dtj3bp16Natm9L1ERGRQsy6F9DChQsxadIk5OTk4OjRo3jxxRexYMECpWsjIiIFmRUAxcXFGDFihDwdFhaGy5cvK1YUEREpz6wAMBqNKC0tladLSkqUqoeIiCzErDGAcePG4a9//SsCAgKgUqmwe/duPPfcc0rXRkRECjLrDODm3Tqrq6tx9uxZFBYW4umnn1a0MCIiUpZZZwBz5szB2LFjMX78eBgMBnz00UeIi4vDu+++q3R9RESkELPOAC5fvozx48cDAOzt7TFhwgTo9XpFCyMiImWZPQh86337L126BEmSGnkGERHd68zqApowYQJCQ0MxePBgqFQqZGdn81YQREStnFkBMGrUKPTt2xeHDh2Cra0tXnjhBfTo0UPp2oiISEFm3w7azc0Nbm5uStZCREQWZNYYABER3X8YAEREgmIAEBEJigFARCQoBgARkaAYAEREgmIAEBEJigFARCQoBgARkaAYAEREgmIAEBEJigFARCQoBgARkaAYAEREglI0AN5++20EBQUhKCgIycnJAIDs7GzodDr4+voiJSVFyc0TEVEjFAuA7OxsHDhwADt37sSuXbvw73//GxkZGYiLi8OaNWuwe/dunDp1CllZWUqVQEREjVAsAJydnTFnzhzY2dmhTZs26NatG/Lz8+Hq6goXFxeo1WrodDpkZmYqVQIRETXC7F8Ea6o//vGP8t/5+fn4/PPPMW7cODg7O8vzNRpNrR+bN4eTk2OL1ag0Z+d2d1zGVFMNG3UbC1TTNPdqXdQ6mHPsk/UpFgA3nTlzBlOmTEFsbCxsbW2Rn58vPyZJElQqVZPWV1xcAZNJkqfv5QNNry+/4zLOzu1wNHmSBappmj/HvmdW/WQ9rf3YJ8uwsVE1+MFZ0UHgo0ePYsKECYiJicGIESPQqVMn6PV6+XG9Xg+NRqNkCURE1ADFAuDixYuYPn06li1bhqCgIABAv379kJeXh4KCAhiNRmRkZMDLy0upEoiIqBGKdQFt2LABBoMBSUlJ8rzRo0cjKSkJ0dHRMBgM8Pb2hr+/v1IlEBFRIxQLgISEBCQkJNT7WHp6ulKbJSIiM/FKYCIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQSn2i2BERPez9r9tC7XdvfcWWlNVg8tl181a9t6rnoioFVDbqXFizX5rl1FHv2lDzF6WXUBERILiGQARWcVvH7SDnb29tcuoo8pgQNmVKmuXYREMACKyCjt7e7w5d4q1y6hj1uJ1AMQIAHYBEREJigFARCQoBgARkaAYAEREgmIAEBEJigFARCQoRb8GWlFRgdGjR2Pt2rXo2rUrsrOzsXjxYhgMBgQEBGDmzJlKbp6oUQ+1s0Mbh3vve+jVlQaUlovxNUSyLsUC4MSJE0hISEB+fj4AoLKyEnFxcdiyZQs6d+6MKVOmICsrC97e3kqVQNSoNg722D1+orXLqCPw/U0AA4AsQLEuoG3btuG1116DRqMBAOTm5sLV1RUuLi5Qq9XQ6XTIzMxUavNERHQHip0BJCYm1pouKiqCs7OzPK3RaFBYWNjk9To5OTa7Nktxdm5n7RKapbXX35q19n3P+q3L3PotdisIk8kElUolT0uSVGvaXMXFFTCZJHn6Xn6h9PryOy7T2utvzVr7vmf9yrmf6rexUTX4wdli3wLq1KkT9Hq9PK3X6+XuISIisjyLBUC/fv2Ql5eHgoICGI1GZGRkwMvLy1KbJyKi21isC8je3h5JSUmIjo6GwWCAt7c3/P39LbV5IiK6jeIBsG/fPvlvrVaL9PR0pTdJRERm4JXARESCYgAQEQmKAUBEJCgGABGRoBgARESCYgAQEQmKAUBEJCgGABGRoBgARESCstitIOj+8+Bv7WFvZ2ftMuplqKrClTKDtcsguqcxAOiu2dvZYcKmv1m7jHr9feIKAAwAosawC4iISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFAMACIiQTEAiIgExQAgIhIUA4CISFBWCYBPP/0UgYGB8PX1xdatW61RAhGR8Cz+k5CFhYVISUlBWloa7OzsMHr0aAwcOBDdu3e3dClEREKzeABkZ2fDw8MDDz30EADAz88PmZmZiIqKMuv5NjaqOvMebv9AS5bYYuqrtT52DzopXMndMaf+hx07WKCSu2NO/W0fbr37HgB++9BvFK7k7phb/4MPte7936adg8KV3J1b62+sLSpJkiRLFHTTunXrcO3aNcycORMAsH37duTm5uL111+3ZBlERMKz+BiAyWSCSvVrIkmSVGuaiIgsw+IB0KlTJ+j1enlar9dDo9FYugwiIuFZPACefPJJHDx4ECUlJbh+/Tq++OILeHl5WboMIiLhWXwQuGPHjpg5cybGjx+P6upqjBo1Co8//rilyyAiEp7FB4GJiOjewCuBiYgExQAgIhIUA4CISFAMACIiQd1XAXD48GG4u7sjJCQEwcHBCAgIwObNm61dVpOcP38effv2RUhICEJCQqDT6eDj44OVK1e22DZWrVqFVatW3dVzJ06ciC+//FKeXrJkCdzd3VFVVSXPGzRoEHx8fHD+/Pk6z4+Pj8fJkydRXl6O6dOn33F727Ztw+DBg7FkyRJERkaisLCwwWV79uzZxNbUdev+Dw0NRVBQECZOnIhffvnF7HXUV0dD+zwkJKRZ9danJdpQn+YcN3ersbbcPB7S0tIwZ84ci9bVmMzMTIwcORLBwcHQ6XR47733mr3OW/f93LlzceHChWavE7DC10CV1rdvX2zZsgUAUFFRgaCgIHh6eraqm81pNBp88skn8nRhYSH8/PwQFBSEbt26WbEywMPDA0ePHsVTTz0F4Ma9nfr374+jR49Cq9WioKAAv/nNb1BTU1Pv8xMTEwHc+Mf+/vvv77i9jIwMLF68GIMGDWq5RtzB7fs/KSkJycnJePPNN1t8W7dupyVZsg1Ka6gt7777rhWrql9hYSGWLFmCtLQ0tG/fHlevXkVERAT+8Ic/YNiwYS2yjcOHD5v14ckc99UZwO0MBgNsbW3Rrl07+Pj4YMaMGfDz80NxcTF27dqFESNGICQkBHFxcTAYDACADz74AM888wyGDx+OESNG4Ny5cwAAHx8fLF++HCNHjkR4eDj279+P8ePHw9vbG7t371a0HXq9HpIk4YEHHsDatWsRGBgInU6HpKQkGI1GAEBKSgrCw8Ph5+eHiIgIXLp0CcCvt94OCgrCnDlzUF1dDQDIzc3F6NGjMXTo0CZ9qtNqtTh27BiAGwe7nZ0d/Pz8cODAAQDAt99+C09PTwDA6tWrERoaCj8/P5w4cQIAEBERgcOHD2PRokUoKiqSD+T6Xo+3334bJ0+exIIFC5CVlSWfVZw+fRrh4eEYOXIkxowZg/z8fLm+efPmITg4GMHBwSgoKGjGXv/VwIEDcebMGXz++ecIDw9HcHAw/P398d1338ltioqKgp+fX61Q++677+Dr61urDqPRiJdeegnJyckAWuaspSltyM3NxZgxYzBixAg8//zz+Pnnn+ttQ0sfN0q0pb6zzMTERMyaNQtGo7HBtirp8uXLqK6uRmVlJQDggQceQFJSErp3727We8ilS5cwbdo0jBw5EmFhYcjOzq61/vXr16OoqAiTJ0/G5cuXm13vfRcAp06dqtV1MmDAAPlWE15eXtizZw9KSkqwbds2pKam4pNPPoGTkxM2bNiAiooKfPnll9iyZQsyMjIwZMiQWr9X8PDDDyMtLQ3dunXD+vXrsXHjRixduhTr169v0TYUFRUhJCQE/v7+GDhwIN566y28/fbb+O9//4t9+/Zhx44d2LlzJwoKCpCamoqCggKcO3cOqamp2LNnDzp37oz09HQUFhZi8eLF2LhxIz777DMYjUZkZWUBAIqLi/H+++9jx44dctvN0adPH/z0008wGAw4cOAAPD094enpWW8AdO/eHbt27UJERAQ2bNhQaz0JCQnQaDRYvXo1zpw5U+/rERUVhb59+2LRokXw9vaWn7t582ZMnDgRaWlpCA8Px/Hjx+XHnnzySaSnp8PT0xOpqanNeRkAANXV1dizZw/69++P1NRUrF27Funp6Zg0aVKt171nz57Ys2cPevXqBQA4ffo04uPjsXbtWri6ugK4cd+rhIQEdOrUCbGxsc2uralt6Nu3LxISErB8+XLs3LkTEydOxKuvvlqnDR06dGjx46al29K/f/86j61atQqFhYVITk6G0WhstK1KcXNzw7Bhw/DUU09h1KhRWLp0KUwmk3wM3Ok9JDExEWFhYUhLS8M777yDefPm1drHkydPhkajwfr169G+fftm13vfdwHd+o/ar18/ADdOoQoKChAeHg7gxkHVu3dvODo6Yvny5fjss8+Qn5+Pr7/+Wv6HBiDfsqJLly7QaDRQq9Xo0qULrly50qJtuHnKazKZkJSUhLNnz8LT0xNLly5FUFAQ2rZtCwAICwvDrl27MHbsWMyePRvbt29HXl4ejh8/jt/97nc4duwY/vSnP6FTp04AgKVLlwIAvv/+ewwePBh2dnbo0KED2rdvj7KyMjg6Ot6xNltbW/Tr1w8nT57EgQMHMHbsWLi4uKCyshJlZWU4duwY4uPjAUDuJurevTv27NnT4Dobej0a4u3tjYULF+Lrr7+Gj48Phg4dKj926za//fbbO7anPjcDGACqqqrw+OOPIyYmBmq1Gvv27UNeXh6OHDkCG5tfPz/dfjX7Cy+8AH9/fzz66KPyvNTUVJSXl2Pv3r13VVdz2xAWFobMzEy8+OKL8nK3vrncbIMSx01LtyUmJgbffPONvMy//vUvlJSU4OOPP4ZarcYPP/yAn3/+ucG2KmnBggWYNm0aDhw4gAMHDiA8PBzLli0DcOf3kOzsbJw7d04e86upqVH0zOW+C4BbOTo6IiAgQD6Nsre3B3DjNDwgIAAJCQkAgKtXr8JoNOLixYuIiIjAuHHj4OXlhYcffrjWKX2bNm3kv9Vq5XedjY0NYmNjERoaig0bNsBkMtVZpqamBqdOnUJMTAwmTJgAPz8/2NjYQJIkqNXqWndaLSkpqbd+lUqFplwQ7uHhge+++w65ubnym4NWq8XevXvRvn17+Q3B1tZWXn9jGno9GuLv7w93d3d89dVX+Pvf/479+/dj0aJFtdrV1Dbd6vY+55s1hYWFITg4GE888QR69uxZ6+zQwaH2feGXLVuG2NhYPPPMM3BzcwMAuLu7o3fv3li0aFGLDuqb24bTp0+ja9eu8nyj0Sh3Fd7aBqWOm7tVX1tu98gjj2DmzJlYuHAhUlNTYTKZGm2rUvbv349r164hMDAQYWFhCAsLw7Zt2/Dxxx8DuPN7iMlkwubNm+XfSykqKoKTk1OtL160pPuuC+hWRqMRR44cqfNpcuDAgfjnP/+J4uJiSJKE+fPnY/PmzTh58iRcXV0xYcIEPPbYY/jyyy8bfSOyBLVajdjYWKxZswa9e/fGZ599hsrKStTU1GDHjh3w8PBATk4OBgwYgDFjxuD3v/899u/fD6PRiMceewzHjx+X7776xhtvtMinT61Wi08++QQ9evSQD2JPT09s2rRJ7v4xp103B4obej0aMmPGDJw8eRKjR4/G3/72N/znP/9pdpvuJD8/HyqVClOnTpXrbezY0Gq1iImJQUJCghzcbm5uiIyMxJkzZ7Bv3z7Fa77do48+irKyMvnMaMeOHXj55ZfrLKfUcaOkbt264ZlnnkHbtm2xdetWs9va0hwcHLB8+XJ5bEKSJHz//fe1ehIa4+HhgQ8//BAA8OOPP0Kn0+H69eu1lrG1tW2x96X77gzg5hiASqVCTU0NevbsicjIyFqfINzc3BAVFYXnnnsOJpMJvXr1wuTJk1FTU4OPPvoIgYGBkCQJTzzxBM6cOWPF1tzg5eUFd3d35OTkYMiQIQgLC0NNTQ0GDRqEcePGobi4GFFRUdDpdABudIOdP38eHTt2RHx8PF544QWYTCb0798fI0eOxJo1a5pVT48ePVBaWopnn31Wnufh4YEZM2bgySefNGsdTk5O6NKlCyIiIrBly5Z6X4+GTJ06FfHx8Vi9ejXatGmD+fPnN6s95nBzc0OvXr0QEBAAlUqFQYMG4ejRo40+JzQ0FGlpaXKXJADY2dlh/vz5mDNnDgYOHKh02bXY2dlhxYoVSExMhMFggKOjI5YsWVJnOaWOG0uYP38+xowZg6efftqstrY0Dw8PREVFYerUqfLA+eDBgzF9+nR8+umnd3x+QkIC5s2bJ/8vJycn1+liGzJkCCZPnoz33nsPLi4uzaqXN4MjIhLUfd0FREREDWMAEBEJigFARCQoBgARkaAYAEREgmIAkLCOHz+OiIgI6HQ6DB8+HJMmTVLka7+RkZH48ccfW3y9RM3Fr4GSkKqqqjB48GBs3LgRffr0AXDjzpwpKSnYu3evfBUz0f3svrsQjMgc169fR3l5Oa5duybPCw4OhqOjIw4ePIgVK1agS5cuOHfuHBwcHJCUlIRu3bqhqqoKy5YtQ05ODoxGI3r37o2EhAQ4OjoiLy8P8+bNQ0lJCWxsbPDiiy8iMDAQPj4+WLFiBR577DHs27cP77zzDqqrq+Hg4IDZs2fD3d0dZ8+eRXx8PKqqqiBJEkaNGoWxY8dacQ+RECQiQW3cuFF6/PHHJR8fH+nll1+Wtm/fLl27dk06dOiQ5ObmJuXk5EiSJEkffvihNGLECEmSJGnVqlVSUlKSZDKZJEmSpOXLl0uvvfaaJEmSFBoaKn3wwQeSJEnS//73P2nYsGFSeXm5NHToUCk3N1fKy8uThg8fLpWUlEiSJEk//PCD5OnpKV29elWaO3eutG7dOkmSJKmoqEiaMWOGZDQaLbk7SEDsAiKhVVRUICcnBzk5OfL9bl555RWsXr0aO3fuBHCju6hfv37Izs5GZGQkysvL5RunVVdXw8nJCatWrYJWq8WJEydgZ2dXaxs3zwByc3OxcuVK+S6bwI0brb377ru4ePEiZs+ejQEDBkCr1cLf3x9OTk4W2gskKnYBkZCOHj2KY8eOYdKkSRg6dCiGDh2KWbNmYfjw4aipqal3DMDW1hYmkwlxcXHy7xNcvXoVBoOh1l1Ibzp37hy6dOkiT5tMJmi1Wrz11lvyvIsXL0Kj0cDNzQ179uxBdnY2Dh48iNWrVyMtLa1WWBC1NH4LiITUoUMHvPPOO7V+M0Cv16OiogKlpaU4ffo0Tp8+DQD4xz/+AXd3dzz44IMYNGgQtm7diqqqKphMJrz66qt488034ejoiD59+mDXrl0AbryxjxkzBuXl5fL6tVotvvnmG5w9exYAkJWVheDgYFRWViImJga7d+9GUFAQXnvtNTg6OuKnn36y3A4hIbELiIR16NAhrFq1Cr/88gvs7e3Rrl07TJ8+Hfb29pg9ezbc3Nxw4cIFdOjQAYmJiejatSsqKyuxZMkSHDlyBEajEb169cLrr78OR0dHFBQUYMGCBbh06RJUKhWio6Px1FNP1RoE/vzzz7F27Vr59xri4uLwl7/8RR4EvnbtGmxtbaHVavHKK6/c8bcUiJqDAUB0m8OHD+P1119HRkaGtUshUhS7gIiIBMUzACIiQfEMgIhIUAwAIiJBMQCIiATFACAiEhQDgIhIUAwAIiJB/R9CI4PkAxvWlgAAAABJRU5ErkJggg==\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.countplot(x='Species',data=df_fish)\n",
+    "plt.show()\n",
+    "sns.set_theme(style=\"darkgrid\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d4e6d638",
+   "metadata": {},
+   "source": [
+    "**2. Check for missing data**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "id": "f2a1efa2",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Species</th>\n",
+       "      <th>Weight</th>\n",
+       "      <th>Length1</th>\n",
+       "      <th>Length2</th>\n",
+       "      <th>Length3</th>\n",
+       "      <th>Height</th>\n",
+       "      <th>Width</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>154</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>155</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>156</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>157</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>158</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>159 rows × 7 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     Species  Weight  Length1  Length2  Length3  Height  Width\n",
+       "0      False   False    False    False    False   False  False\n",
+       "1      False   False    False    False    False   False  False\n",
+       "2      False   False    False    False    False   False  False\n",
+       "3      False   False    False    False    False   False  False\n",
+       "4      False   False    False    False    False   False  False\n",
+       "..       ...     ...      ...      ...      ...     ...    ...\n",
+       "154    False   False    False    False    False   False  False\n",
+       "155    False   False    False    False    False   False  False\n",
+       "156    False   False    False    False    False   False  False\n",
+       "157    False   False    False    False    False   False  False\n",
+       "158    False   False    False    False    False   False  False\n",
+       "\n",
+       "[159 rows x 7 columns]"
+      ]
+     },
+     "execution_count": 86,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.isnull() #the data is not missing indicates the false value."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b5910211",
+   "metadata": {},
+   "source": [
+    "**False indicates that the data is not missing.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "82ab3847",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Species    0\n",
+       "Weight     0\n",
+       "Length1    0\n",
+       "Length2    0\n",
+       "Length3    0\n",
+       "Height     0\n",
+       "Width      0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 87,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.isnull().sum() #the count of missing data in each column is given. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "336250b4",
+   "metadata": {},
+   "source": [
+    "**3.Identify the shape of your data**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "f8ab8d90",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(159, 7)"
+      ]
+     },
+     "execution_count": 88,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a4bfe328",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sns.pairplot(df_fish,hue=\"Species\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "579bddf0",
+   "metadata": {},
+   "source": [
+    "The following conclusions can be drawn from the multivariant graphs:<br>\n",
+    "-Perch and pike fishes develop wider bodies.<br>\n",
+    "-Pike fish can develop to greater weight and length.<br>\n",
+    "-Bream fish grow taller than other fish."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2e712baa",
+   "metadata": {},
+   "source": [
+    "**4. Identify significant correlations**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 101,
+   "id": "b08bdd7a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Weight</th>\n",
+       "      <th>Length1</th>\n",
+       "      <th>Length2</th>\n",
+       "      <th>Length3</th>\n",
+       "      <th>Height</th>\n",
+       "      <th>Width</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Weight</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.915712</td>\n",
+       "      <td>0.918618</td>\n",
+       "      <td>0.923044</td>\n",
+       "      <td>0.724345</td>\n",
+       "      <td>0.886507</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Length1</th>\n",
+       "      <td>0.915712</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.999517</td>\n",
+       "      <td>0.992031</td>\n",
+       "      <td>0.625378</td>\n",
+       "      <td>0.867050</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Length2</th>\n",
+       "      <td>0.918618</td>\n",
+       "      <td>0.999517</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.994103</td>\n",
+       "      <td>0.640441</td>\n",
+       "      <td>0.873547</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Length3</th>\n",
+       "      <td>0.923044</td>\n",
+       "      <td>0.992031</td>\n",
+       "      <td>0.994103</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.703409</td>\n",
+       "      <td>0.878520</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Height</th>\n",
+       "      <td>0.724345</td>\n",
+       "      <td>0.625378</td>\n",
+       "      <td>0.640441</td>\n",
+       "      <td>0.703409</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.792881</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Width</th>\n",
+       "      <td>0.886507</td>\n",
+       "      <td>0.867050</td>\n",
+       "      <td>0.873547</td>\n",
+       "      <td>0.878520</td>\n",
+       "      <td>0.792881</td>\n",
+       "      <td>1.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "           Weight   Length1   Length2   Length3    Height     Width\n",
+       "Weight   1.000000  0.915712  0.918618  0.923044  0.724345  0.886507\n",
+       "Length1  0.915712  1.000000  0.999517  0.992031  0.625378  0.867050\n",
+       "Length2  0.918618  0.999517  1.000000  0.994103  0.640441  0.873547\n",
+       "Length3  0.923044  0.992031  0.994103  1.000000  0.703409  0.878520\n",
+       "Height   0.724345  0.625378  0.640441  0.703409  1.000000  0.792881\n",
+       "Width    0.886507  0.867050  0.873547  0.878520  0.792881  1.000000"
+      ]
+     },
+     "execution_count": 101,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.corr(method='pearson')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8f361aea",
+   "metadata": {},
+   "source": [
+    "our dataset has Direct(Positive) Correlation from the above data we can say."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7c44b253",
+   "metadata": {},
+   "source": [
+    "**5. Spot/deal with outliers in the dataset**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 104,
+   "id": "77616ba4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#Box plot is plotted to view the outliers\n",
+    "df_fish.boxplot()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1ee715d",
+   "metadata": {},
+   "source": [
+    "There are some outliers in the above box plot."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "id": "04e3c9fe",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.boxplot(x=df_fish['Weight'])\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae8b4e6d",
+   "metadata": {},
+   "source": [
+    "In weight boxplot, we see that there are 3 outliers after the weight 1250."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "id": "e7eea2ce",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(array([142, 143, 144]),)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(np.where(df_fish['Weight']>1300))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 109,
+   "id": "24a650cd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_fish.drop(144,inplace=True)\n",
+    "df_fish.drop(143,inplace=True)\n",
+    "df_fish.drop(142,inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 110,
+   "id": "fe18a1e7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(156, 7)"
+      ]
+     },
+     "execution_count": 110,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_fish.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 111,
+   "id": "52998462",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(array([], dtype=int64),)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(np.where(df_fish['Weight']>1300))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "id": "9e3a990f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.boxplot(x=df_fish['Weight'])\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2509b970",
+   "metadata": {},
+   "source": [
+    "Weight boxplot are now removed from all the 3 outliers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 113,
+   "id": "ea5475aa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "df_fish.boxplot()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 114,
+   "id": "dc7e4ff6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAWAAAAEGCAYAAABbzE8LAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjMuNCwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8QVMy6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAKyklEQVR4nO3db6ie913H8c83ibpkm8wmXayZGmYEFXUVo05XtC2tBCkO1IKgNIJuTyRNq2OoT0Rl4COxjQorOJagUzbnppQYTLeK+kBHMjvS2gwPLhtN7b+UrRuJnSf5+eC+y06TJact55zvfc79esHhnHPdJ9f1O19O31z5pblSY4wAsPY2dS8AYF4JMEATAQZoIsAATQQYoMmWV/PFO3bsGLt3716lpQBsTCdPnnxujHH95cdfVYB3796dEydOrNyqAOZAVX3+6x23BQHQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMECTV/VvwrH2Dh06lIWFhe5lXNPZs2eTJLt27WpeyWu3Z8+eHDhwoHsZzBkBnnELCwt55NHHc3Hbdd1LuarN57+UJHnqxfX547T5/PPdS2BOrc//YubMxW3X5cL3/Ez3Mq5q6+mjSTLTa7yWl9YPa80eMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAkzUJ8KFDh3Lo0KG1uBQwR9Z7W7asxUUWFhbW4jLAnFnvbbEFAdBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAA1zDuXPncvfdd+fcuXMrfm4BBriGw4cP59SpUzly5MiKn1uAAa7i3LlzOXbsWMYYOXbs2IrfBW9Z0bNdxdmzZ3PhwoUcPHhwLS63oSwsLGTTV0f3Mja0Tf/7QhYWvuzncx1aWFjI1q1bV+38hw8fzqVLl5IkFy9ezJEjR3Lvvfeu2PmXvQOuqndX1YmqOvHss8+u2IUBZt1DDz2UxcXFJMni4mKOHz++oudf9g54jPFAkgeSZO/eva/pVmzXrl1Jkvvuu++1/PK5dvDgwZz876e7l7GhXXrdN2fPW3f6+VyHVvt3LbfddluOHj2axcXFbNmyJbfffvuKnt8eMMBV7N+/P5s2TTK5efPm3HXXXSt6fgEGuIrt27dn3759qars27cv27dvX9Hzr8kfwgGsV/v378+ZM2dW/O43EWCAa9q+fXvuv//+VTm3LQiAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNtqzFRfbs2bMWlwHmzHpvy5oE+MCBA2txGWDOrPe22IIAaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaCLAAE0EGKCJAAM0EWCAJgIM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQJMt3QtgeZvPP5+tp492L+OqNp8/lyQzvcZr2Xz++SQ7u5fBHBLgGbdnz57uJSzr7NnFJMmuXes1YjvXxZzZeAR4xh04cKB7CcAqsQcM0ESAAZoIMEATAQZoIsAATQQYoIkAAzQRYIAmAgzQRIABmggwQBMBBmgiwABNBBigiQADNBFggCYCDNBEgAGaCDBAEwEGaFJjjFf+xVXPJvn86i1nWTuSPNd4/VljHlcyk5czjyt1zOQ7xxjXX37wVQW4W1WdGGPs7V7HrDCPK5nJy5nHlWZpJrYgAJoIMECT9RbgB7oXMGPM40pm8nLmcaWZmcm62gMG2EjW2x0wwIYhwABNZjbAVfWBqnqmqh5dcuy6qjpeVf81ff8tnWtcS1X17VX1cFU9XlWPVdXB6fG5nElVva6qPlVVn5nO4/emx+dyHi+pqs1V9R9V9eD083mfx5mqOlVVj1TViemxmZnJzAY4yQeT7Lvs2G8l+cQY47uTfGL6+bxYTPKbY4zvTfL2JL9eVd+X+Z3Ji0luHWO8LcmNSfZV1dszv/N4ycEkjy/5fN7nkSS3jDFuXPL//s7OTMYYM/uWZHeSR5d8/tkkN0w/viHJZ7vX2Dibv0tyu5mMJNmW5NNJfmye55HkLZkE5dYkD06Pze08pt/zmSQ7Ljs2MzOZ5Tvgr2fnGON/kmT6/s3N62lRVbuT/FCSf88cz2T62+1HkjyT5PgYY67nkeSPk7w3yaUlx+Z5HkkykvxjVZ2sqndPj83MTLZ0XZjXpqrekOSjSe4ZY7xQVd1LajPGuJjkxqp6U5KPVdX3Ny+pTVXdkeSZMcbJqrq5eTmz5B1jjCer6s1JjlfV6e4FLbXe7oCfrqobkmT6/pnm9aypqvqGTOL7l2OMv50enuuZJMkY44tJ/imTPzOY13m8I8nPVtWZJH+d5Naq+ovM7zySJGOMJ6fvn0nysSQ/mhmayXoL8N8n2T/9eH8m+6BzoSa3un+e5PExxh8teWkuZ1JV10/vfFNVW5PcluR05nQeY4zfHmO8ZYyxO8kvJvnkGOOXM6fzSJKqen1VvfGlj5P8dJJHM0Mzmdm/CVdVf5Xk5kweHfd0kt9N8vEkH07yHUm+kOTOMcbzTUtcU1V1U5J/SXIqX9vj+51M9oHnbiZV9YNJDifZnMmNxIfHGL9fVdszh/NYaroF8Z4xxh3zPI+qemsmd73JZLv1Q2OM983STGY2wAAb3XrbggDYMAQYoIkAAzQRYIAmAgzQRIBpU1VfWeXz31NV25a7XlX9ZFV9uqoWq+oXVnNNsJQAs5Hdk8mDepbzhSS/kuRDq7kYuJxnQTBTquq7kvxpkuuTnE/yrjHG6ar6YJIXkuxN8q1J3jvG+Juq2pTkT5L8VJLPZXJT8YEk3zZ9e7iqnhtj3DI9//uS3JHkQpJ3jjGeHmOcmb629CE2sOrcATNrHkhyYIzxw0nek+TPlrx2Q5KbMgnoH06P/Vwmjy39gSS/luTHk2SMcX+SJzN5Fuwt0699fZJ/G5NnCP9zknet6ncCy3AHzMyYPuntJ5J8ZMlT3r5pyZd8fIxxKcl/VtXO6bGbknxkevypqnr4Gpf4apIHpx+fzOR5ytBGgJklm5J8cYxx41Vef3HJx3XZ+1fi/8bX/u79xfj5p5ktCGbGGOOFJJ+rqjuTyRPgqupty/yyf03y81W1aXpXfPOS176c5I2rslhYAQJMp21V9cSSt99I8ktJfrWqPpPksSTvXOYcH03yRCaPGXx/Jk+H+9L0tQeS/MMy2xKpqh+pqieS3Jnk/VX12Gv/luCV8zQ01r2qesMY4yvTxwx+KpN/BeGp7nXBcuyBsRE8OH04+zcm+QPxZb1wBwzQxB4wQBMBBmgiwABNBBigiQADNPl/wxgz3YbAK5sAAAAASUVORK5CYII=\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.boxplot(x=df_fish['Length1'])\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 115,
+   "id": "ff6a3a3a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(array([141]),)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(np.where(df_fish['Length1']>50))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 116,
+   "id": "251fe716",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_fish.drop(141,inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 117,
+   "id": "1a13a701",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "sns.boxplot(x=df_fish['Length1'])\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 118,
+   "id": "0ffc5d28",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "df_fish.boxplot()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "40a5de93",
+   "metadata": {},
+   "source": [
+    "we see that the final boxplot has no outliers after removing all the outliers."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2b934655",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
